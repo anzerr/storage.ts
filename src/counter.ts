@@ -18,7 +18,7 @@ export class Counter {
 		const now = time.now() + (this._duration[key] ? this._duration[key] : -60 * 1000);
 		let i = 0;
 		while (this._data[key][i]) {
-			if (this._data[key][i].time < now) {
+			if (this._data[key][i].time < now || !this._data[key][i].value) {
 				i++;
 			} else {
 				break;
@@ -35,13 +35,14 @@ export class Counter {
 	}
 
 	add(key: string, value: number): void {
-		if (value === 0) {
+		const v = Number(value) || 0;
+		if (!v) {
 			return;
 		}
 		if (!this._data[key]) {
 			this._data[key] = [];
 		}
-		this._data[key].push({value: value, time: time.now()});
+		this._data[key].push({value: v, time: time.now()});
 	}
 
 	get(key: string): {value: number; time: number}[] {
@@ -49,7 +50,9 @@ export class Counter {
 	}
 
 	reduce(key: string): number {
-		return this.get(key).reduce((a, b) => a + b.value, 0);
+		return this.get(key).reduce((a, b) => {
+			return (b.value) ? a + b.value : a;
+		}, 0);
 	}
 
 	all(): {[key: string]: {value: number; time: number}[]} {

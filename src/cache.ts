@@ -9,13 +9,13 @@ interface CacheRecord {
 	data: any;
 }
 
-export default class Cache {
+export class Cache {
 
 	private _cache: {[key: string]: CacheRecord};
 
 	think: Think;
 
-	constructor() {
+	constructor(interval = 60000) {
 		this._cache = {};
 		this.think = new Think(() => {
 			const o = {}, now = time.now();
@@ -25,7 +25,7 @@ export default class Cache {
 				}
 			}
 			this._cache = o;
-		}, 1000 * 60);
+		}, interval);
 	}
 
 	get(key: string): any | null {
@@ -44,6 +44,10 @@ export default class Cache {
 		return this;
 	}
 
+	set(key: string, data: any, timeout = 3000): Cache {
+		return this.add(key, data, timeout);
+	}
+
 	add(key: string, data: any, timeout = 3000): Cache {
 		this._cache[key] = {data: data, timeout: time.now() + timeout};
 		return this;
@@ -56,12 +60,24 @@ export default class Cache {
 		}
 
 		const out = cd();
-		return ((out instanceof Promise) ? out : Promise.resolve(out)).then((data) => {
-			if (is.defined(data)) {
-				this.add(key, data, n);
-			}
-			return data;
-		});
+		if (out instanceof Promise) {
+			return out.then((data) => {
+				if (is.defined(data)) {
+					this.add(key, data, n);
+				}
+				return data;
+			});
+		}
+		if (is.defined(out)) {
+			this.add(key, out, n);
+		}
+		return Promise.resolve(out);
+	}
+
+	close(): void {
+		if (this.think) {
+			this.think.stop();
+		}
 	}
 
 }

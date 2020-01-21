@@ -5,7 +5,8 @@
 	"main": "dist/index.js",
 	"scripts": {
 		"build": "tsc -p ./",
-		"clean": "find ./src -regex \".*.(js|map|d.ts)\" -type f -delete && rm -Rf ./dist"
+		"clean": "find ./src -regex \".*.(js|map|d.ts)\" -type f -delete && rm -Rf ./dist",
+		"test": "ts-node test.ts"
 	},
 	"keywords": [],
 	"author": "",

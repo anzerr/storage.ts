@@ -1,63 +1,102 @@
 
 import {time} from 'time.util';
+import {Counter} from './counter';
+import Think from 'think.library';
+import is from 'type.util';
 
-export class Counter {
+class PoolCounterConfig {
 
-	_data: {[key: string]: {value: number; time: number}[]};
-	_duration: {[key: string]: number};
+	timeout: number;
+	interval: number;
+	drain?: (any) => void
 
-	constructor() {
-		this._data = {};
-		this._duration = {};
+}
+
+export class PoolCounter {
+
+	pool: {
+		keys: {[key: string]: number};
+		valid: {[key: string]: number};
+		shard: {[key: string]: string};
+	};
+	counter: Counter;
+	think: Think;
+	config: PoolCounterConfig
+
+	constructor(config: PoolCounterConfig) {
+		this.config = config;
+		this.counter = new Counter();
+		this.pool = {keys: null, valid: {}, shard: {}};
+		if (this.config.interval !== null) {
+			this.think = new Think(() => {
+				if (this.pool.keys) {
+					const drain = this.drain();
+					if (drain[0] && is.function(this.config.drain)) {
+						this.config.drain(drain[1]);
+					}
+				}
+			}, this.config.interval);
+		}
 	}
 
-	clean(key: string): {value: number; time: number}[] {
-		if (!this._data[key]) {
-			return [];
-		}
-		const now = time.now() + (this._duration[key] ? this._duration[key] : -60 * 1000);
-		let i = 0;
-		while (this._data[key][i]) {
-			if (this._data[key][i].time < now) {
-				i++;
-			} else {
-				break;
+	drain(): [number, {[key: string]: any}] {
+		const out = {};
+		let count = 0;
+		for (const i in this.pool.keys) {
+			const k = Number(this.pool.keys[i]) || 0;
+			if (k) {
+				const shard = this.pool.shard[i] || '';
+				if (!out[shard]) {
+					out[shard] = {};
+				}
+				this.counter.add(i, k);
+				this.pool.valid[i] = time.now() + this.config.timeout;
+				out[shard][i] = k;
+				count += 1;
 			}
 		}
-		if (i !== 0) {
-			this._data[key].splice(0, i);
+		const now = time.now(), valid = {};
+		for (const i in this.pool.valid) {
+			if (this.pool.valid[i] > now) {
+				valid[i] = this.pool.valid[i];
+			}
 		}
-		return this._data[key];
+		this.pool.keys = null;
+		this.pool.valid = valid;
+		return [count, out];
 	}
 
-	duration(key: string, duration: number): void {
-		this._duration[key] = Math.abs(duration) * -1;
-	}
-
-	add(key: string, value: number): void {
-		if (value === 0) {
-			return;
+	add(shard: string, key: string, value: number): PoolCounter {
+		if (!this.pool.keys) {
+			this.pool.keys = {};
 		}
-		if (!this._data[key]) {
-			this._data[key] = [];
+		this.pool.keys[key] = (this.pool.keys[key] || 0) + (Number(value) || 0);
+		this.pool.shard[key] = shard;
+		if (!this.counter._duration[key]) {
+			this.counter.duration(key, this.config.timeout);
 		}
-		this._data[key].push({value: value, time: time.now()});
+		return this;
 	}
 
-	get(key: string): {value: number; time: number}[] {
-		return this.clean(key);
-	}
-
-	reduce(key: string): number {
-		return this.get(key).reduce((a, b) => a + b.value, 0);
-	}
-
-	all(): {[key: string]: {value: number; time: number}[]} {
-		const o = {};
-		for (const i in this._data) {
-			o[i] = this.clean(i);
+	get(): {[key: string]: {[key: string]: number}} {
+		const now = time.now(), valid = {}, out = {};
+		for (const i in this.pool.valid) {
+			if (this.pool.valid[i] > now) {
+				valid[i] = this.pool.valid[i];
+				const shard = this.pool.shard[i] || '';
+				if (!out[shard]) {
+					out[shard] = {};
+				}
+				out[shard][i] = this.counter.reduce(i);
+			}
 		}
-		return o;
+		return out;
+	}
+
+	close(): void {
+		if (this.think) {
+			this.think.stop();
+		}
 	}
 
 }

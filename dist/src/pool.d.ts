@@ -1,29 +1,35 @@
-export declare class Counter {
-    _data: {
-        [key: string]: {
-            value: number;
-            time: number;
-        }[];
-    };
-    _duration: {
-        [key: string]: number;
-    };
-    constructor();
-    clean(key: string): {
-        value: number;
-        time: number;
-    }[];
-    duration(key: string, duration: number): void;
-    add(key: string, value: number): void;
-    get(key: string): {
-        value: number;
-        time: number;
-    }[];
-    reduce(key: string): number;
-    all(): {
-        [key: string]: {
-            value: number;
-            time: number;
-        }[];
-    };
+import { Counter } from './counter';
+import Think from 'think.library';
+declare class PoolCounterConfig {
+    timeout: number;
+    interval: number;
+    drain?: (any: any) => void;
 }
+export declare class PoolCounter {
+    pool: {
+        keys: {
+            [key: string]: number;
+        };
+        valid: {
+            [key: string]: number;
+        };
+        shard: {
+            [key: string]: string;
+        };
+    };
+    counter: Counter;
+    think: Think;
+    config: PoolCounterConfig;
+    constructor(config: PoolCounterConfig);
+    drain(): [number, {
+        [key: string]: any;
+    }];
+    add(shard: string, key: string, value: number): PoolCounter;
+    get(): {
+        [key: string]: {
+            [key: string]: number;
+        };
+    };
+    close(): void;
+}
+export {};
