@@ -2,6 +2,8 @@
 import {Counter, Ref, PoolCounter, Cache, NetworkMap} from './index';
 import * as assert from 'assert';
 
+const NS_PER_SEC = 1e9;
+
 class Test {
 
 	measure(cd: any): number {
@@ -12,7 +14,6 @@ class Test {
 	}
 
 	measureCacheSpeed(): Promise<any> {
-		const NS_PER_SEC = 1e9;
 		const runs = 1000000;
 		const count = new Counter();
 
@@ -129,13 +130,23 @@ class Test {
 				assert.equal(data.node['3'][0], 'egg');
 				assert.equal(data.node['3'][2], 100);
 				assert.equal(data.edge['1']['2'][1], 1100);
+				console.log('NetworkMap.get calls 1000000', this.measure(() => {
+					for (let i = 0; i < 1000000; i++) {
+						map.get();
+					}
+				}) / NS_PER_SEC);
+				console.log('NetworkMap.add calls 1000000', this.measure(() => {
+					for (let i = 0; i < 1000000; i++) {
+						map.add('cat', 'dog', 100);
+					}
+				}) / NS_PER_SEC);
 				setTimeout(() => {
 					const data = map.get();
 					assert.equal(Object.keys(data.node).length, 0);
 					assert.equal(Object.keys(data.edge).length, 0);
 					map.close();
 					resolve();
-				}, 2000);
+				}, 2100);
 			}, 500);
 		});
 	}
