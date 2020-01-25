@@ -1,28 +1,40 @@
 {
 	"name": "storage.ts",
 	"version": "1.0.3",
-	"description": "",
+	"keywords": [],
+	"homepage": "https://github.com/anzerr/storage.ts#readme",
+	"bugs": {
+		"url": "https://github.com/anzerr/storage.ts/issues"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git@github.com:anzerr/storage.ts.git"
+	},
+	"license": "MIT",
+	"author": "anzerr",
 	"main": "dist/index.js",
+	"types": "dist/index.d.ts",
 	"scripts": {
 		"build": "tsc -p ./",
 		"clean": "find ./src -regex \".*.(js|map|d.ts)\" -type f -delete && rm -Rf ./dist",
 		"test": "ts-node test.ts"
 	},
-	"keywords": [],
-	"author": "",
-	"license": "ISC",
-	"devDependencies": {
-		"@types/node": "^13.1.7",
-		"eslint-config-typescript": "git+https://git@github.com/anzerr/eslint-config-typescript.git",
-		"ts-node": "^8.6.2",
-		"typescript": "^3.7.5"
+	"eslintConfig": {
+		"extends": "eslint-config-typescript"
 	},
 	"dependencies": {
 		"type.util": "git+https://git@github.com/anzerr/type.util.git",
 		"think.library": "git+https://git@github.com/anzerr/think.library.git",
 		"time.util": "git+https://git@github.com/anzerr/time.util.git"
 	},
-	"eslintConfig": {
-		"extends": "eslint-config-typescript"
-	}
+	"devDependencies": {
+		"@types/node": "^13.1.7",
+		"eslint-config-typescript": "git+https://git@github.com/anzerr/eslint-config-typescript.git",
+		"ts-node": "^8.6.2",
+		"typescript": "^3.7.5"
+	},
+	"engines": {
+		"node": ">= 0.10.0"
+	},
+	"description": ""
 }
