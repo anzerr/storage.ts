@@ -3,7 +3,8 @@ Object.defineProperty(exports, "__esModule", { value: true });
 const think_library_1 = require("think.library");
 const ref_1 = require("./ref");
 const pool_1 = require("./pool");
-const events = require("events");
+const _events = require("events");
+const events = _events;
 class MapData {
 }
 class NetworkMap extends events {

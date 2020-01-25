@@ -1,8 +1,7 @@
-/// <reference types="node" />
 import Think from 'think.library';
 import { Ref } from './ref';
 import { PoolCounter } from './pool';
-import * as events from 'events';
+declare const events: any;
 declare class MapData {
     node: {
         [key: string]: [string, number, number];

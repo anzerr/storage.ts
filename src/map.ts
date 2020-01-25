@@ -2,7 +2,9 @@
 import Think from 'think.library';
 import {Ref} from './ref';
 import {PoolCounter} from './pool';
-import * as events from 'events';
+import * as _events from 'events';
+
+const events: any = _events;
 
 class MapData {
 
