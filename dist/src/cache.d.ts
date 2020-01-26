@@ -1,6 +1,8 @@
 import Think from 'think.library';
 export declare class Cache {
     private _cache;
+    private _hook;
+    private _events;
     think: Think;
     constructor(interval?: number);
     get(key: string): any | null;

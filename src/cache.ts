@@ -3,6 +3,10 @@
 import is from 'type.util';
 import Think from 'think.library';
 import {time} from 'time.util';
+import * as _EventEmitter from 'events';
+import { resolve } from 'dns';
+
+const EventEmitter: any = _EventEmitter;
 
 interface CacheRecord {
 	timeout: number;
@@ -12,11 +16,15 @@ interface CacheRecord {
 export class Cache {
 
 	private _cache: {[key: string]: CacheRecord};
+	private _hook: {[key: string]: boolean};
+	private _events: any;
 
 	think: Think;
 
 	constructor(interval = 60000) {
 		this._cache = {};
+		this._hook = {};
+		this._events = new EventEmitter();
 		this.think = new Think(() => {
 			const o = {}, now = time.now();
 			for (const i in this._cache) {
@@ -59,17 +67,28 @@ export class Cache {
 			return Promise.resolve(cache);
 		}
 
+		if (this._hook[key]) {
+			return new Promise((resolve) => {
+				this._events.once(key, (data) => resolve(data));
+			});
+		}
+
+		this._hook[key] = true;
 		const out = cd();
 		if (out instanceof Promise) {
 			return out.then((data) => {
+				this._hook[key] = false;
 				if (is.defined(data)) {
 					this.add(key, data, n);
+					this._events.emit(key, data);
 				}
 				return data;
 			});
 		}
+		this._hook[key] = false;
 		if (is.defined(out)) {
 			this.add(key, out, n);
+			this._events.emit(key, out);
 		}
 		return Promise.resolve(out);
 	}

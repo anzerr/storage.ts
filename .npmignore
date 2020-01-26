@@ -4,7 +4,11 @@ node_modules/*
 .github
 LICENSE
 README.md
-example.ts
-test.ts
-tsconfig.json
-src
+./example.ts
+/example.ts
+./test.ts
+./tsconfig.json
+/test.ts
+/tsconfig.json
+./Build/*
+/src/*
