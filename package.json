@@ -1,7 +1,14 @@
 {
 	"name": "storage.ts",
 	"version": "1.0.6",
-	"keywords": [],
+	"description": "Util to store data used in a service",
+	"keywords": [
+		"data",
+		"nodejs",
+		"storage",
+		"typescript",
+		"util"
+	],
 	"homepage": "https://github.com/anzerr/storage.ts#readme",
 	"bugs": {
 		"url": "https://github.com/anzerr/storage.ts/issues"
@@ -35,6 +42,5 @@
 	},
 	"engines": {
 		"node": ">= 0.10.0"
-	},
-	"description": ""
+	}
 }
