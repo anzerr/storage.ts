@@ -36,7 +36,7 @@ export class NetworkMap extends events {
 				for (const i in drain.node) {
 					drain.node[i] = [
 						this.ref.getRef(i),
-						drain.node[i][`${i}-tx`], 
+						drain.node[i][`${i}-tx`],
 						drain.node[i][`${i}-value`]
 					];
 				}
@@ -71,7 +71,7 @@ export class NetworkMap extends events {
 			.add(id[1], `${id[1]}-value`, absValue);
 		const edge = `${id[0]}-${id[1]}`;
 		this.pool.edge.add(edge, `${edge}-tx`, 1)
-			.add(edge, `${edge}-value`, value);
+			.add(edge, `${edge}-value`, absValue);
 		return this;
 	}
 

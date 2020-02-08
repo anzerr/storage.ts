@@ -56,7 +56,7 @@ class NetworkMap extends events {
             .add(id[1], `${id[1]}-value`, absValue);
         const edge = `${id[0]}-${id[1]}`;
         this.pool.edge.add(edge, `${edge}-tx`, 1)
-            .add(edge, `${edge}-value`, value);
+            .add(edge, `${edge}-value`, absValue);
         return this;
     }
     get() {
