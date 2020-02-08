@@ -34,7 +34,11 @@ export class NetworkMap extends events {
 			if (drain.edge[0] || drain.node[0]) {
 				drain = {edge: drain.edge[1], node: drain.node[1]};
 				for (const i in drain.node) {
-					drain.node[i] = [drain.node[i][`${i}-tx`], drain.node[i][`${i}-value`]];
+					drain.node[i] = [
+						this.ref.getRef(i),
+						drain.node[i][`${i}-tx`], 
+						drain.node[i][`${i}-value`]
+					];
 				}
 				const edge = {};
 				for (const i in drain.edge) {
