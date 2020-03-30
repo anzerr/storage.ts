@@ -47,8 +47,15 @@ class Cache {
             return Promise.resolve(cache);
         }
         if (this._hook[key]) {
-            return new Promise((resolve) => {
-                this._events.once(key, (data) => resolve(data));
+            return new Promise((resolve, reject) => {
+                this._events.once(key, (data) => {
+                    if (data[0]) {
+                        resolve(data[1]);
+                    }
+                    else {
+                        reject(data[1]);
+                    }
+                });
             });
         }
         this._hook[key] = true;
@@ -58,9 +65,13 @@ class Cache {
                 this._hook[key] = false;
                 if (type_util_1.default.defined(data)) {
                     this.add(key, data, n);
-                    this._events.emit(key, data);
+                    this._events.emit(key, [true, data]);
                 }
                 return data;
+            }).catch((err) => {
+                this._hook[key] = false;
+                this._events.emit(key, [false, err]);
+                return Promise.reject(err);
             });
         }
         this._hook[key] = false;

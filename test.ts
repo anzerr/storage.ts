@@ -110,6 +110,38 @@ class Test {
 				assert.equal(cache.get('test'), 'cat');
 				assert.equal(init, 1);
 			});
+		}).then(() => {
+			let fail = 0, valid = 0, run = 0;
+			return Promise.all([
+				cache.auto('error', () => {
+					run += 1;
+					return Promise.reject('fuck');
+				}).then(() => {
+					fail += 1;
+				}).catch(() => {
+					valid += 1;
+				}),
+				cache.auto('error', () => {
+					run += 1;
+					return Promise.reject('fuck');
+				}).then(() => {
+					fail += 1;
+				}).catch(() => {
+					valid += 1;
+				}),
+				cache.auto('error', () => {
+					run += 1;
+					return Promise.reject('fuck');
+				}).then(() => {
+					fail += 1;
+				}).catch(() => {
+					valid += 1;
+				})
+			]).then(() => {
+				assert.equal(fail, 0);
+				assert.equal(valid, 3);
+				assert.equal(run, 1);
+			});
 		});
 	}
 
