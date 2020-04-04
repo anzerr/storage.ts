@@ -4,6 +4,7 @@ const think_library_1 = require("think.library");
 const ref_1 = require("./ref");
 const pool_1 = require("./pool");
 const _events = require("events");
+const type_util_1 = require("type.util");
 const events = _events;
 class MapData {
 }
@@ -15,35 +16,41 @@ class NetworkMap extends events {
             node: new pool_1.PoolCounter({ timeout: config.timeout, interval: null }),
             edge: new pool_1.PoolCounter({ timeout: config.timeout, interval: null })
         };
-        this.think = new think_library_1.default(() => {
-            let drain = {
-                edge: this.pool.edge.drain(),
-                node: this.pool.node.drain()
-            };
-            if (drain.edge[0] || drain.node[0]) {
-                drain = { edge: drain.edge[1], node: drain.node[1] };
-                for (const i in drain.node) {
-                    drain.node[i] = [
-                        this.ref.getRef(i),
-                        drain.node[i][`${i}-tx`],
-                        drain.node[i][`${i}-value`]
-                    ];
-                }
-                const edge = {};
-                for (const i in drain.edge) {
-                    const side = i.split('-');
-                    if (!edge[side[0]]) {
-                        edge[side[0]] = {};
-                    }
-                    edge[side[0]][side[1]] = [
-                        drain.edge[i][`${i}-tx`],
-                        drain.edge[i][`${i}-value`]
-                    ];
-                }
-                drain.edge = edge;
-                this.emit('update', drain);
+        if (type_util_1.default.defined(this.config.interval)) {
+            if (!type_util_1.default.number(this.config.interval)) {
+                throw new Error(`interval can be null or a number "${typeof this.config.interval}" is invalid`);
             }
-        }, config.interval);
+            this.think = new think_library_1.default(() => this.drain(), config.interval);
+        }
+    }
+    drain() {
+        let drain = {
+            edge: this.pool.edge.drain(),
+            node: this.pool.node.drain()
+        };
+        if (drain.edge[0] || drain.node[0]) {
+            drain = { edge: drain.edge[1], node: drain.node[1] };
+            for (const i in drain.node) {
+                drain.node[i] = [
+                    this.ref.getRef(i),
+                    drain.node[i][`${i}-tx`],
+                    drain.node[i][`${i}-value`]
+                ];
+            }
+            const edge = {};
+            for (const i in drain.edge) {
+                const side = i.split('-');
+                if (!edge[side[0]]) {
+                    edge[side[0]] = {};
+                }
+                edge[side[0]][side[1]] = [
+                    drain.edge[i][`${i}-tx`],
+                    drain.edge[i][`${i}-value`]
+                ];
+            }
+            drain.edge = edge;
+            this.emit('update', drain);
+        }
     }
     add(from, to, value) {
         if (from === to || value === 0) {

@@ -23,6 +23,7 @@ export declare class NetworkMap extends events {
         timeout: number;
         interval: number;
     });
+    drain(): void;
     add(from: string, to: string, value: number): NetworkMap;
     get(): MapData;
     close(): void;

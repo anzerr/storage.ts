@@ -27,7 +27,10 @@ export class PoolCounter {
 		this.config = config;
 		this.counter = new Counter();
 		this.pool = {keys: null, valid: {}, shard: {}};
-		if (this.config.interval !== null) {
+		if (is.defined(this.config.interval)) {
+			if (!is.number(this.config.interval)) {
+				throw new Error(`interval can be null or a number "${typeof this.config.interval}" is invalid`);
+			}
 			this.think = new Think(() => {
 				if (this.pool.keys) {
 					const drain = this.drain();

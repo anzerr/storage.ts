@@ -3,6 +3,7 @@ import Think from 'think.library';
 import {Ref} from './ref';
 import {PoolCounter} from './pool';
 import * as _events from 'events';
+import is from 'type.util';
 
 const events: any = _events;
 
@@ -26,35 +27,42 @@ export class NetworkMap extends events {
 			node: new PoolCounter({timeout: config.timeout, interval: null}),
 			edge: new PoolCounter({timeout: config.timeout, interval: null})
 		};
-		this.think = new Think(() => {
-			let drain: any = {
-				edge: this.pool.edge.drain(),
-				node: this.pool.node.drain()
-			};
-			if (drain.edge[0] || drain.node[0]) {
-				drain = {edge: drain.edge[1], node: drain.node[1]};
-				for (const i in drain.node) {
-					drain.node[i] = [
-						this.ref.getRef(i),
-						drain.node[i][`${i}-tx`],
-						drain.node[i][`${i}-value`]
-					];
-				}
-				const edge = {};
-				for (const i in drain.edge) {
-					const side = i.split('-');
-					if (!edge[side[0]]) {
-						edge[side[0]] = {};
-					}
-					edge[side[0]][side[1]] = [
-						drain.edge[i][`${i}-tx`],
-						drain.edge[i][`${i}-value`]
-					];
-				}
-				drain.edge = edge;
-				this.emit('update', drain);
+		if (is.defined(this.config.interval)) {
+			if (!is.number(this.config.interval)) {
+				throw new Error(`interval can be null or a number "${typeof this.config.interval}" is invalid`);
 			}
-		}, config.interval);
+			this.think = new Think(() => this.drain(), config.interval);
+		}
+	}
+
+	drain(): void {
+		let drain: any = {
+			edge: this.pool.edge.drain(),
+			node: this.pool.node.drain()
+		};
+		if (drain.edge[0] || drain.node[0]) {
+			drain = {edge: drain.edge[1], node: drain.node[1]};
+			for (const i in drain.node) {
+				drain.node[i] = [
+					this.ref.getRef(i),
+					drain.node[i][`${i}-tx`],
+					drain.node[i][`${i}-value`]
+				];
+			}
+			const edge = {};
+			for (const i in drain.edge) {
+				const side = i.split('-');
+				if (!edge[side[0]]) {
+					edge[side[0]] = {};
+				}
+				edge[side[0]][side[1]] = [
+					drain.edge[i][`${i}-tx`],
+					drain.edge[i][`${i}-value`]
+				];
+			}
+			drain.edge = edge;
+			this.emit('update', drain);
+		}
 	}
 
 	add(from: string, to: string, value: number): NetworkMap {
