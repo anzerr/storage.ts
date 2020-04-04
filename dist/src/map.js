@@ -8,19 +8,22 @@ const type_util_1 = require("type.util");
 const events = _events;
 class MapData {
 }
+class NetworkMapConfig {
+}
 class NetworkMap extends events {
     constructor(config) {
         super();
+        this.config = config;
         this.ref = new ref_1.Ref();
         this.pool = {
-            node: new pool_1.PoolCounter({ timeout: config.timeout, interval: null }),
-            edge: new pool_1.PoolCounter({ timeout: config.timeout, interval: null })
+            node: new pool_1.PoolCounter({ timeout: this.config.timeout, interval: null }),
+            edge: new pool_1.PoolCounter({ timeout: this.config.timeout, interval: null })
         };
         if (type_util_1.default.defined(this.config.interval)) {
             if (!type_util_1.default.number(this.config.interval)) {
                 throw new Error(`interval can be null or a number "${typeof this.config.interval}" is invalid`);
             }
-            this.think = new think_library_1.default(() => this.drain(), config.interval);
+            this.think = new think_library_1.default(() => this.drain(), this.config.interval);
         }
     }
     drain() {

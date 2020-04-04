@@ -14,24 +14,33 @@ class MapData {
 
 }
 
+class NetworkMapConfig {
+
+	timeout: number;
+	interval: number;
+
+}
+
 export class NetworkMap extends events {
 
 	ref: Ref;
 	think: Think;
 	pool: {node: PoolCounter; edge: PoolCounter}
+	config: NetworkMapConfig;
 
-	constructor(config: {timeout: number; interval: number}) {
+	constructor(config: NetworkMapConfig) {
 		super();
+		this.config = config;
 		this.ref = new Ref();
 		this.pool = {
-			node: new PoolCounter({timeout: config.timeout, interval: null}),
-			edge: new PoolCounter({timeout: config.timeout, interval: null})
+			node: new PoolCounter({timeout: this.config.timeout, interval: null}),
+			edge: new PoolCounter({timeout: this.config.timeout, interval: null})
 		};
 		if (is.defined(this.config.interval)) {
 			if (!is.number(this.config.interval)) {
 				throw new Error(`interval can be null or a number "${typeof this.config.interval}" is invalid`);
 			}
-			this.think = new Think(() => this.drain(), config.interval);
+			this.think = new Think(() => this.drain(), this.config.interval);
 		}
 	}
 

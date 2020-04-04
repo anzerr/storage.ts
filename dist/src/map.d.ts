@@ -12,6 +12,10 @@ declare class MapData {
         };
     };
 }
+declare class NetworkMapConfig {
+    timeout: number;
+    interval: number;
+}
 export declare class NetworkMap extends events {
     ref: Ref;
     think: Think;
@@ -19,10 +23,8 @@ export declare class NetworkMap extends events {
         node: PoolCounter;
         edge: PoolCounter;
     };
-    constructor(config: {
-        timeout: number;
-        interval: number;
-    });
+    config: NetworkMapConfig;
+    constructor(config: NetworkMapConfig);
     drain(): void;
     add(from: string, to: string, value: number): NetworkMap;
     get(): MapData;
