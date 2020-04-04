@@ -74,7 +74,7 @@ export class NetworkMap extends events {
 		}
 	}
 
-	add(from: string, to: string, value: number): NetworkMap {
+	add(from: string, to: string, value: number, count = 1): NetworkMap {
 		if (from === to || value === 0) {
 			return this;
 		}
@@ -82,12 +82,12 @@ export class NetworkMap extends events {
 			id = [fromRef, this.ref.get(to)].sort(),
 			absValue = (fromRef === id[0]) ? value : -value;
 
-		this.pool.node.add(id[0], `${id[0]}-tx`, 1)
-			.add(id[1], `${id[1]}-tx`, 1)
+		this.pool.node.add(id[0], `${id[0]}-tx`, count)
+			.add(id[1], `${id[1]}-tx`, count)
 			.add(id[0], `${id[0]}-value`, -absValue)
 			.add(id[1], `${id[1]}-value`, absValue);
 		const edge = `${id[0]}-${id[1]}`;
-		this.pool.edge.add(edge, `${edge}-tx`, 1)
+		this.pool.edge.add(edge, `${edge}-tx`, count)
 			.add(edge, `${edge}-value`, absValue);
 		return this;
 	}

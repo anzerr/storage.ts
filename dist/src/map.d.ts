@@ -26,7 +26,7 @@ export declare class NetworkMap extends events {
     config: NetworkMapConfig;
     constructor(config: NetworkMapConfig);
     drain(): void;
-    add(from: string, to: string, value: number): NetworkMap;
+    add(from: string, to: string, value: number, count?: number): NetworkMap;
     get(): MapData;
     close(): void;
 }

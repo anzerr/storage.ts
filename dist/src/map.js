@@ -55,17 +55,17 @@ class NetworkMap extends events {
             this.emit('update', drain);
         }
     }
-    add(from, to, value) {
+    add(from, to, value, count = 1) {
         if (from === to || value === 0) {
             return this;
         }
         const fromRef = this.ref.get(from), id = [fromRef, this.ref.get(to)].sort(), absValue = (fromRef === id[0]) ? value : -value;
-        this.pool.node.add(id[0], `${id[0]}-tx`, 1)
-            .add(id[1], `${id[1]}-tx`, 1)
+        this.pool.node.add(id[0], `${id[0]}-tx`, count)
+            .add(id[1], `${id[1]}-tx`, count)
             .add(id[0], `${id[0]}-value`, -absValue)
             .add(id[1], `${id[1]}-value`, absValue);
         const edge = `${id[0]}-${id[1]}`;
-        this.pool.edge.add(edge, `${edge}-tx`, 1)
+        this.pool.edge.add(edge, `${edge}-tx`, count)
             .add(edge, `${edge}-value`, absValue);
         return this;
     }
