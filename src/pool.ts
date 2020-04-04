@@ -7,7 +7,7 @@ import is from 'type.util';
 class PoolCounterConfig {
 
 	timeout: number;
-	interval: number;
+	interval?: number;
 	drain?: (any) => void
 
 }

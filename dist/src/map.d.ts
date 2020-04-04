@@ -14,7 +14,7 @@ declare class MapData {
 }
 declare class NetworkMapConfig {
     timeout: number;
-    interval: number;
+    interval?: number;
 }
 export declare class NetworkMap extends events {
     ref: Ref;

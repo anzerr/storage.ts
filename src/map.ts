@@ -17,7 +17,7 @@ class MapData {
 class NetworkMapConfig {
 
 	timeout: number;
-	interval: number;
+	interval?: number;
 
 }
 

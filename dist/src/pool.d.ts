@@ -2,7 +2,7 @@ import { Counter } from './counter';
 import Think from 'think.library';
 declare class PoolCounterConfig {
     timeout: number;
-    interval: number;
+    interval?: number;
     drain?: (any: any) => void;
 }
 export declare class PoolCounter {
