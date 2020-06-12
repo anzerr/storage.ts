@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.Cache = void 0;
 const type_util_1 = require("type.util");
 const think_library_1 = require("think.library");
 const time_util_1 = require("time.util");

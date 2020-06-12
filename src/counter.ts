@@ -5,17 +5,19 @@ export class Counter {
 
 	_data: {[key: string]: {value: number; time: number}[]};
 	_duration: {[key: string]: number};
+	defaultDuration: number;
 
-	constructor() {
+	constructor(duration = 60000) {
 		this._data = {};
 		this._duration = {};
+		this.defaultDuration = duration;
 	}
 
 	clean(key: string): {value: number; time: number}[] {
 		if (!this._data[key]) {
 			return [];
 		}
-		const now = time.now() + (this._duration[key] ? this._duration[key] : -60 * 1000);
+		const now = time.now() + (this._duration[key] ? this._duration[key] : -this.defaultDuration);
 		let i = 0;
 		while (this._data[key][i]) {
 			if (this._data[key][i].time < now || !this._data[key][i].value) {

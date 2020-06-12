@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.Ref = void 0;
 class Ref {
     constructor() {
         this.enum = { id: {}, ref: {} };

@@ -1,5 +1,6 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.NetworkMap = void 0;
 const think_library_1 = require("think.library");
 const ref_1 = require("./ref");
 const pool_1 = require("./pool");

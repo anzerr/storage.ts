@@ -1,16 +1,18 @@
 "use strict";
 Object.defineProperty(exports, "__esModule", { value: true });
+exports.Counter = void 0;
 const time_util_1 = require("time.util");
 class Counter {
-    constructor() {
+    constructor(duration = 60000) {
         this._data = {};
         this._duration = {};
+        this.defaultDuration = duration;
     }
     clean(key) {
         if (!this._data[key]) {
             return [];
         }
-        const now = time_util_1.time.now() + (this._duration[key] ? this._duration[key] : -60 * 1000);
+        const now = time_util_1.time.now() + (this._duration[key] ? this._duration[key] : -this.defaultDuration);
         let i = 0;
         while (this._data[key][i]) {
             if (this._data[key][i].time < now || !this._data[key][i].value) {

@@ -8,7 +8,8 @@ export declare class Counter {
     _duration: {
         [key: string]: number;
     };
-    constructor();
+    defaultDuration: number;
+    constructor(duration?: number);
     clean(key: string): {
         value: number;
         time: number;
