@@ -13,7 +13,7 @@ class Test {
 		return (end[0] * 1e9 + end[1]);
 	}
 
-	measureCacheSpeed(): Promise<any> {
+	measureCacheSpeed(): Promise<void> {
 		const runs = 1000000;
 		const count = new Counter();
 
@@ -48,7 +48,7 @@ class Test {
 		assert.equal(ref.getRef(2), 'dog');
 	}
 
-	measurePool(): Promise<any> {
+	measurePool(): Promise<void> {
 		const pool = new PoolCounter({timeout: 2000, interval: 100});
 
 		return new Promise((resolve) => {
@@ -72,7 +72,7 @@ class Test {
 		});
 	}
 
-	testCache(): Promise<any> {
+	testCache(): Promise<void> {
 		const cache = new Cache();
 		assert.equal(cache.get('test'), null);
 		cache.set('test', 'tests');
@@ -85,7 +85,7 @@ class Test {
 			setTimeout(() => {
 				assert.equal(cache.get('test'), null);
 				cache.close();
-				resolve();
+				resolve(null);
 			}, 1500);
 		}).then(() => {
 			let init = 0;
@@ -145,7 +145,7 @@ class Test {
 		});
 	}
 
-	testMap(): any {
+	testMap(): Promise<any> {
 		const map = new NetworkMap({timeout: 2000, interval: 100});
 		map.add('cat', 'dog', 100);
 		map.add('cat', 'dog', 1000);
@@ -177,7 +177,7 @@ class Test {
 					assert.equal(Object.keys(data.node).length, 0);
 					assert.equal(Object.keys(data.edge).length, 0);
 					map.close();
-					resolve();
+					resolve(null);
 				}, 2100);
 			}, 500);
 		});
