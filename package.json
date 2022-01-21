@@ -26,9 +26,6 @@
 		"clean": "find ./src -regex \".*.(js|map|d.ts)\" -type f -delete && rm -Rf ./dist",
 		"test": "ts-node test.ts"
 	},
-	"eslintConfig": {
-		"extends": "eslint-config-typescript"
-	},
 	"dependencies": {
 		"type.util": "git+https://git@github.com/anzerr/type.util.git",
 		"think.library": "git+https://git@github.com/anzerr/think.library.git",
@@ -36,9 +33,8 @@
 	},
 	"devDependencies": {
 		"@types/node": "^13.1.7",
-		"eslint-config-typescript": "git+https://git@github.com/anzerr/eslint-config-typescript.git",
-		"ts-node": "^8.6.2",
-		"typescript": "^3.7.5"
+		"ts-node": "^10.4.0",
+		"typescript": "^4.5.5"
 	},
 	"engines": {
 		"node": ">= 0.10.0"
