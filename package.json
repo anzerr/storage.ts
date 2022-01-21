@@ -1,6 +1,6 @@
 {
 	"name": "storage.ts",
-	"version": "1.0.19",
+	"version": "1.0.20",
 	"description": "Util to store data used in a service",
 	"keywords": [
 		"data",
